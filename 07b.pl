@@ -1,0 +1,46 @@
+#!/usr/bin/perl
+use warnings;
+use strict;
+use feature qw{ say };
+
+use ARGV::OrDATA;
+use List::Util qw{ sum };
+
+my @grid;
+my ($sy, $sx) = (0, 0);
+while (<>) {
+    ($sy, $sx) = ($. - 1, pos() - 1) if /S/g;
+    push @grid, [split //];
+}
+
+my %beam = ($sx => 1);
+for my $y ($sy .. $#grid - 1) {
+    my %next;
+    for my $x (keys %beam) {
+        if ($grid[ $y + 1 ][$x] eq '.') {
+            $next{$x} += $beam{$x};
+        } else {
+            $next{$_} += $beam{$x} for $x - 1, $x + 1;
+        }
+    }
+    %beam = %next;
+}
+say sum(values %beam);
+
+__DATA__
+.......S.......
+...............
+.......^.......
+...............
+......^.^......
+...............
+.....^.^.^.....
+...............
+....^.^...^....
+...............
+...^.^...^.^...
+...............
+..^...^.....^..
+...............
+.^.^.^.^.^...^.
+...............
