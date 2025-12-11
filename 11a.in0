@@ -1,0 +1,14 @@
+svr: a b c
+a: d
+b: d
+c: e fft
+d: fft
+e: dac
+g: h i
+h: dac
+i: dac
+j: out
+k: out
+l: out
+fft: f g
+dac: j k l
