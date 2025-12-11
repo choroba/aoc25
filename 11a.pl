@@ -1,28 +1,27 @@
 #!/usr/bin/perl
 use warnings;
 use strict;
+use experimental qw( signatures );
 use feature qw{ say };
 
 use ARGV::OrDATA;
+use Memoize;
+use List::Util qw{ sum0 };
 
 my %g;
 while (<>) {
     chomp;
     my ($from, @to) = split /:? /;
-    @{ $g{$from} }{@to} = ();
+    undef $g{$_}{$from} for @to;
 }
 
-my %agenda = (svr => 1);
-my %seen;
-while (keys %agenda) {
-    my %next;
-    for my $from (keys %agenda) {
-        $seen{$from} += $agenda{$from};
-        $next{$_} += $seen{$from} for keys %{ $g{$from} };
-    }
-    %agenda = %next;
+memoize('paths');
+sub paths($from, $to) {
+    return 1 if $from eq $to;
+    return sum0(map paths($from, $_), keys  %{ $g{$to} })
 }
-say $seen{out};
+
+say paths('you', 'out');
 
 __DATA__
 aaa: you hhh
